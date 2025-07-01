@@ -1,0 +1,114 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load humanize %}
+{% block title %}Главная — Аналитика Недвижимости{% endblock %}
+
+{% block content %}
+<main>
+    <div class="container">
+
+        <!-- ======== БЛОК МОСКВЫ (Возвращаем структуру) ======== -->
+        <section class="region-analytics">
+            <h1 class="region-title">Аналитика рынка недвижимости Москвы</h1>
+            <div class="region-content">
+                <!-- Левая колонка с данными -->
+                <div class="region-data">
+                    <!-- Используем новые виджеты "Пульс рынка" -->
+                    <div class="key-metrics">
+                        {% if moscow_pulse %}
+                        <div class="metric-item">
+                            <div class="metric-value">{{ moscow_pulse.avg_price|floatformat:0|intcomma }} ₽</div>
+                            <div class="metric-label">Средняя цена м² (вторичка)</div>
+                        </div>
+                        <div class="metric-item">
+                            <div class="metric-value {% if '+' in moscow_pulse.change %}text-positive{% else %}text-negative{% endif %}">
+                                {% if '+' in moscow_pulse.change %}↗{% elif '-' in moscow_pulse.change %}↘{% endif %}
+                                {{ moscow_pulse.change }}
+                            </div>
+                            <div class="metric-label">Изменение за месяц</div>
+                        </div>
+                        {% else %}
+                            <p>Нет данных для отображения.</p>
+                        {% endif %}
+                    </div>
+                    <!-- Возвращаем популярные районы -->
+                    <div class="popular-locations">
+                        <h3 class="popular-title">Популярные районы</h3>
+                        {% for district in moscow_districts %}
+                            <a href="{{ district.get_absolute_url }}">{{ district.name }}</a>{% if not forloop.last %}, {% endif %}
+                        {% endfor %}
+                    </div>
+                </div>
+                <!-- Правая колонка с визуализацией (возвращаем) -->
+                <div class="region-visuals">
+    <!-- data-атрибуты помогут JS понять, какие данные запрашивать -->
+                    <canvas id="moscow-price-chart"
+                            data-city-id="77"
+                            data-property-type="secondary"
+                            data-property-class="vall"></canvas>
+                </div>
+            </div>
+        </section>
+
+        <!-- ======== БЛОК САНКТ-ПЕТЕРБУРГА (Возвращаем структуру) ======== -->
+        <section class="region-analytics">
+            <h2 class="region-title">Аналитика рынка недвижимости Санкт-Петербурга</h2>
+            <div class="region-content">
+                <!-- Левая колонка -->
+                <div class="region-data">
+                   <div class="key-metrics">
+                        {% if spb_pulse %}
+                        <div class="metric-item">
+                            <div class="metric-value">{{ spb_pulse.avg_price|floatformat:0|intcomma }} ₽</div>
+                            <div class="metric-label">Средняя цена м² (вторичка)</div>
+                        </div>
+                        <div class="metric-item">
+                            <div class="metric-value {% if '+' in spb_pulse.change %}text-positive{% else %}text-negative{% endif %}">
+                                {% if '+' in spb_pulse.change %}↗{% elif '-' in spb_pulse.change %}↘{% endif %}
+                                {{ spb_pulse.change }}
+                            </div>
+                            <div class="metric-label">Изменение за месяц</div>
+                        </div>
+                        {% else %}
+                            <p>Нет данных для отображения.</p>
+                        {% endif %}
+                   </div>
+                    <div class="popular-locations">
+                        <h3 class="popular-title">Популярные районы</h3>
+                         {% for district in spb_districts %}
+                            <a href="{{ district.get_absolute_url }}">{{ district.name }}</a>{% if not forloop.last %}, {% endif %}
+                         {% endfor %}
+                    </div>
+                </div>
+                <!-- Правая колонка -->
+                <div class="region-visuals">
+                    <canvas id="spb-price-chart"
+                            data-city-id="78"
+                            data-property-type="secondary"
+                            data-property-class="vall"></canvas>
+                </div>
+            </div>
+        </section>
+
+        <!-- ======== БЛОК ЖУРНАЛА (Возвращаем, как был) ======== -->
+        <section class="journal-preview">
+            <h2 class="section-title">Журнал: Статьи и Исследования</h2>
+            <div class="articles-grid">
+                {% for article in latest_articles %}
+                <article class="article-card">
+                    <a href="{{ article.get_absolute_url }}" class="article-card-link">
+                        <img src="https://placehold.co/400x250/800000/fff?text={{ article.title|slice:':15' }}" alt="{{ article.title }}" class="article-image">
+                        <div class="article-content">
+                            <h3 class="article-title">{{ article.title }}</h3>
+                            <p class="article-excerpt">{{ article.content|truncatewords:20 }}</p>
+                        </div>
+                    </a>
+                </article>
+                {% empty %}
+                    <p>Пока нет ни одной статьи.</p>
+                {% endfor %}
+            </div>
+        </section>
+    </div>
+</main>
+{% endblock %}

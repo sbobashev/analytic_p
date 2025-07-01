@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+{% block title %}Регистрация{% endblock %}
+{% block content %}
+<div class="container" style="max-width: 500px; margin-top: 50px; margin-bottom: 50px;">
+    <h1 class="page-title text-center">Создать аккаунт</h1>
+
+    <form method="post" class="styled-form">
+        {% csrf_token %}
+
+        <!-- Отображение общих ошибок формы (например, "пользователь уже существует") -->
+        {% if form.non_field_errors %}
+            <div class="form-errors">
+                {{ form.non_field_errors }}
+            </div>
+        {% endif %}
+
+        <!-- Отрисовываем каждое поле вручную -->
+        {% for field in form %}
+            <div class="form-group">
+                <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                {{ field }}
+                {% if field.help_text %}
+                    <small class="form-help-text">{{ field.help_text|safe }}</small>
+                {% endif %}
+                {% if field.errors %}
+                    <div class="field-errors">
+                        {{ field.errors }}
+                    </div>
+                {% endif %}
+            </div>
+        {% endfor %}
+
+        <button type="submit" class="cta-button" style="width: 100%; margin-top: 20px;">Создать аккаунт</button>
+    </form>
+</div>
+{% endblock %}

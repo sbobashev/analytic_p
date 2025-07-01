@@ -1,0 +1,113 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Район{% endblock %}
+{% load humanize %}
+
+    <!-- ======== ОСНОВНОЕ СОДЕРЖИМОЕ ======== -->
+{% block content %}
+    <!-- ======== ОСНОВНОЕ СОДЕРЖИМОЕ СТРАНИЦЫ РАЙОНА ======== -->
+    <main>
+        <div class="container">
+            <!-- "Хлебные крошки" для навигации -->
+            <nav class="breadcrumbs">
+                <a href="{% url 'home' %}">Главная</a> »
+                <a href="#">Москва</a> »
+                <a href="#">ЦАО</a> »
+                <span>Хамовники</span>
+            </nav>
+
+            {% if is_accessible %}
+            <!-- Основной контент страницы -->
+            <div class="page-layout">
+                <!-- Левая, основная колонка с детальной информацией -->
+                <div class="main-content" data-district-id = "{{district_id}}">
+
+                    <h1 class="page-title">{{ district.smart_name|default:district.name }}</h1>
+                    <p class="page-subtitle">Комплексный анализ цен, инфраструктуры и инвестиционного потенциала одного из самых престижных районов Москвы.</p>
+
+                   <div class="data-block">
+                        <h2 class="data-block-title">Ключевые показатели (Вторичный рынок)</h2>
+                        {% if key_metrics %}
+                            <table class="data-table">
+                                <tr>
+                                    <td>Средняя цена м² в {{ key_metrics.month_name }}</td>
+                                    <td><strong>{{ key_metrics.avg_price|floatformat:0|intcomma }} ₽</strong></td>
+                                </tr>
+                                <tr>
+                                    <td>Изменение за месяц</td>
+                                    <td class="{% if '+' in key_metrics.change %}text-positive{% else %}text-negative{% endif %}">
+                                        {% if '+' in key_metrics.change %}↗{% elif '-' in key_metrics.change %}↘{% endif %}
+                                        {{ key_metrics.change }}
+                                    </td>
+                                </tr>
+                                <!-- Можно добавить другие показатели -->
+                            </table>
+                        {% else %}
+                            <p>Нет данных для отображения ключевых показателей.</p>
+                        {% endif %}
+                    </div>
+
+                    <div class="data-block">
+                        <h2 class="data-block-title">Динамика цен (Вторичный рынок)</h2>
+                        <div class="chart-container">
+                            <!-- Добавляем ID и data-атрибуты, чтобы наш JS мог построить график -->
+                            <canvas id="district-chart"
+                                    data-zonen-id="{{ district.zonen_id }}"
+                                    data-property-type="secondary"
+                                    data-property-class="vall">
+                            </canvas>
+                        </div>
+                    </div>
+
+                    <!-- ... после блока <div class="data-block"> с первым графиком ... -->
+
+                    <div class="data-block">
+                        <h2 class="data-block-title">Динамика по классам жилья (Вторичный рынок)</h2>
+                        <div class="chart-container">
+                            <!-- Новый canvas с уникальным ID и data-атрибутами -->
+                            <canvas id="class-dynamics-chart"
+                                    data-zonen-id="{{ district.zonen_id }}"
+                                    data-property-type="secondary"></canvas>
+                        </div>
+                    </div>
+
+                    <div class="data-block">
+                        <h2 class="data-block-title">Карта</h2>
+                        <div id="district-map" class="sidebar-map"
+                         data-geometry='{{ district_geometry_json }}'
+                         data-name="{{ district.smart_name|default:district.name }}"></div>
+                    </div>
+                </div>
+
+
+                <!-- ======== БЛОК ДЛЯ ГРАФИКА ДИНАМИКИ ЦЕН ======== -->
+
+
+
+                <!-- Правая колонка (сайдбар) -->
+                <aside class="sidebar">
+                    <div class="sidebar-widget">
+                        <h3 class="sidebar-title">Карта района</h3>
+                        <div class="placeholder-chart sidebar-map">Интерактивная карта района Хамовники</div>
+                    </div>
+                    <div class="sidebar-widget">
+                         <h3 class="sidebar-title">Полный отчет</h3>
+                         <p>Получите полный PDF-отчет по району с выгрузкой всех данных.</p>
+                         <a href="#" class="cta-button">Скачать за 990 ₽</a>
+                    </div>
+                </aside>
+            </div>
+            {% else %}
+                 <!-- ПОЛЬЗОВАТЕЛЬ НЕ ИМЕЕТ ДОСТУПА - ПОКАЗЫВАЕМ PAYWALL -->
+            <div class="paywall-container">
+                <h1 class="page-title">Аналитика района {{ district.name }}</h1>
+                <h2>🔒 Это платный контент</h2>
+                <p>Полный доступ к детальной аналитике по районам, интерактивным картам, графикам и выгрузке отчетов доступен только для пользователей с активной подпиской.</p>
+                <a href="{% url 'tariffs' %}" class="cta-button">Узнать о тарифах</a>
+            </div>
+          {% endif %}
+
+        </div>
+    </main>
+
+  {% endblock %}

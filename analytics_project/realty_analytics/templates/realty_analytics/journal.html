@@ -1,0 +1,74 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Журнал{% endblock %}
+
+{% block content %}
+    <!-- ======== ОСНОВНОЕ СОДЕРЖИМОЕ ======== -->
+    <main>
+        <div class="container">
+            <h1 class="page-title text-center">Журнал</h1>
+            <p class="page-subtitle text-center">Обзоры, исследования и новости рынка недвижимости.</p>
+
+            <!-- Используем ту же сетку, что и на главной -->
+            <div class="articles-grid">
+                {% for article in articles %}
+                <article class="article-card">
+                    <a href="{{ article.get_absolute_url }}" class="article-card-link">
+                        <img src="https://placehold.co/400x250/800000/fff?text={{ article.title|slice:':15' }}" alt="{{ article.title }}" class="article-image">
+                        <div class="article-content">
+                            <h3 class="article-title">{{ article.title }}</h3>
+                            <p class="article-excerpt">{{ article.content|truncatewords:20 }}</p>
+                        </div>
+                    </a>
+                </article>
+                {% empty %}
+                    <p>Пока нет ни одной статьи.</p>
+                {% endfor %}
+
+
+
+<!--                &lt;!&ndash; Карточка 1 &ndash;&gt;-->
+<!--                <article class="article-card">-->
+<!--                    <a href="article.html" class="article-card-link">-->
+<!--                        <img src="https://placehold.co/400x250/800000/fff?text=Статья" alt="Обложка статьи" class="article-image">-->
+<!--                        <div class="article-content">-->
+<!--                            <h3 class="article-title">Топ-5 районов Москвы по росту цен в 2024 году</h3>-->
+<!--                            <p class="article-excerpt">Подробный анализ показывает, что инвесторам стоит обратить внимание на районы за пределами ТТК...</p>-->
+<!--                        </div>-->
+<!--                    </a>-->
+<!--                </article>-->
+<!--                &lt;!&ndash; Карточка 2 &ndash;&gt;-->
+<!--                <article class="article-card">-->
+<!--                     <a href="article.html" class="article-card-link">-->
+<!--                        <img src="https://placehold.co/400x250/800000/fff?text=Статья" alt="Обложка статьи" class="article-image">-->
+<!--                        <div class="article-content">-->
+<!--                            <h3 class="article-title">Инфраструктура Петроградского района: плюсы и минусы</h3>-->
+<!--                            <p class="article-excerpt">Рассматриваем транспортную доступность, парки и социальные объекты одного из самых престижных районов...</p>-->
+<!--                        </div>-->
+<!--                    </a>-->
+<!--                </article>-->
+<!--                &lt;!&ndash; Карточка 3 &ndash;&gt;-->
+<!--                <article class="article-card">-->
+<!--                     <a href="article.html" class="article-card-link">-->
+<!--                        <img src="https://placehold.co/400x250/800000/fff?text=Статья" alt="Обложка статьи" class="article-image">-->
+<!--                        <div class="article-content">-->
+<!--                            <h3 class="article-title">Коммерческая недвижимость: какой формат выбрать?</h3>-->
+<!--                            <p class="article-excerpt">Стрит-ритейл или офисный центр? Сравниваем доходность и риски для частного инвестора.</p>-->
+<!--                        </div>-->
+<!--                    </a>-->
+<!--                </article>-->
+                <!-- Карточка 4, 5, 6... (можете скопировать еще) -->
+            </div>
+
+            <!-- Блок пагинации -->
+            <nav class="pagination">
+                <a href="#" class="page-number current">1</a>
+                <a href="#" class="page-number">2</a>
+                <a href="#" class="page-number">3</a>
+                <a href="#" class="page-number">...</a>
+                <a href="#" class="page-number">10</a>
+            </nav>
+        </div>
+    </main>
+
+{% endblock %}

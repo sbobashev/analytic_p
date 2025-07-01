@@ -1,0 +1,34 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Большая карта{% endblock %}
+{% block body_class %}fullscreen-map-page{% endblock %}
+{% block content %}
+    <div class="analytics-layout">
+        <!-- Боковая панель для фильтров -->
+        <aside class="analytics-sidebar">
+            <h2 class="sidebar-main-title">Фильтры {{ city_id }}</h2>
+            <div class="filter-group">
+                <h3 class="filter-title">Слои</h3>
+                <label><input type="checkbox" name="layer" value="novostroyki"> Показать новостройки</label>
+                <label><input type="checkbox" name="layer" value="parks"> Показать парки</label>
+            </div>
+             <div class="filter-group">
+                <h3 class="filter-title">Класс жилья</h3>
+                <label><input type="checkbox" name="class" value="economy"> Эконом</label>
+                <label><input type="checkbox" name="class" value="comfort"> Комфорт</label>
+                <label><input type="checkbox" name="class" value="business"> Бизнес</label>
+            </div>
+        </aside>
+        <!-- Контейнер для карты -->
+        <main class="analytics-map-container">
+            <div id="analytics-map"
+                 data-city-id="{{ city_id }}"
+                 data-map-config='{{ map_config_json }}'>
+            </div>
+
+        </main>
+    </div>
+{% endblock %}
+
+
+    <!-- На этой странице нет подвала (footer) -->

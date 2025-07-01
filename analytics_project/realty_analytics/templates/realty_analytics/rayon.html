@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Аналитика: [Название района] — Аналитика рынка недвижимости</title>
+
+    <!-- Подключаем те же шрифты и стили, что и на главной -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Roboto:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+    <!-- ======== ШАПКА САЙТА (та же, что и на главной) ======== -->
+    <header class="site-header">
+        <div class="container">
+            <!-- Ссылку в логотипе теперь ведем на главную страницу -->
+            <a href="index.html" class="logo">АНАЛИТИКА НЕДВИЖИМОСТИ</a>
+            <nav class="main-nav">
+                <ul>
+                    <li><a href="#">Аналитика</a></li>
+                    <li><a href="#">Журнал</a></li>
+                    <li><a href="#">Тарифы</a></li>
+                    <li><a href="#">О проекте</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <!-- ======== ОСНОВНОЕ СОДЕРЖИМОЕ СТРАНИЦЫ РАЙОНА ======== -->
+    <main>
+        <div class="container">
+
+            <!-- "Хлебные крошки" для навигации -->
+            <nav class="breadcrumbs">
+                <a href="index.html">Главная</a> /
+                <a href="#">Москва</a> /
+                <span>Район Хамовники</span>
+            </nav>
+
+            <!-- Заголовок страницы -->
+            <div class="page-header">
+                <h1>Район Хамовники</h1>
+                <!-- Сюда можно добавить ключевые виджеты, как на главной -->
+            </div>
+
+            <!-- Блок с вкладками (табами) -->
+            <div class="tabs-container">
+                <!-- Панель переключения вкладок -->
+                <div class="tabs-nav">
+                    <button class="tab-button active" data-tab="tab-1">Обзор и карта</button>
+                    <button class="tab-button" data-tab="tab-2">Ценовая динамика</button>
+                    <button class="tab-button" data-tab="tab-3">Структура предложения</button>
+                    <button class="tab-button" data-tab="tab-4">Инфраструктура</button>
+                </div>
+
+                <!-- Содержимое вкладок -->
+                <div class="tabs-content">
+                    <!-- Контент для вкладки 1 (видна по умолчанию) -->
+                    <div class="tab-pane active" id="tab-1">
+                        <h2>Общая информация</h2>
+                        <p>Хамовники — один из самых престижных и дорогих районов Москвы, расположенный в Центральном административном округе. Здесь находится множество парков, элитных жилых комплексов и культурных объектов...</p>
+                        <div class="placeholder-chart" style="height: 400px; margin-top: 20px;">Интерактивная карта района Хамовники</div>
+                    </div>
+                    <!-- Контент для вкладки 2 (скрыт) -->
+                    <div class="tab-pane" id="tab-2">
+                        <h2>Динамика цен на недвижимость</h2>
+                        <div class="placeholder-chart" style="height: 400px; margin-top: 20px;">График изменения цен в районе Хамовники</div>
+                    </div>
+                    <!-- Контент для вкладки 3 (скрыт) -->
+                    <div class="tab-pane" id="tab-3">
+                        <h2>Структура предложения на рынке</h2>
+                        <div class="placeholder-chart" style="height: 400px; margin-top: 20px;">Диаграммы по типам квартир и классам жилья</div>
+                    </div>
+                    <!-- Контент для вкладки 4 (скрыт) -->
+                    <div class="tab-pane" id="tab-4">
+                        <h2>Инфраструктура района</h2>
+                        <p>Список школ, парков, больниц и т.д.</p>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+</body>
+</html>

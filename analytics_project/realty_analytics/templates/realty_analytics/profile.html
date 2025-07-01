@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+{% block title %}Ваш профиль{% endblock %}
+{% block content %}
+<div class="container" style="max-width: 800px; margin-top: 50px;">
+    <h1 class="page-title">Профиль: {{ user.username }}</h1>
+    
+    <div class="data-block">
+        <h2 class="data-block-title">Статус подписки</h2>
+        {% if user.profile.is_pro %}
+            <p>✅ У вас активна подписка <strong>"Профессионал"</strong>.</p>
+            <p>Доступ действителен до: <strong>{{ user.profile.subscription_expires_on|date:"d E Y" }} г.</strong></p>
+        {% else %}
+            <p>❌ У вас нет активной подписки.</p>
+            <p>Получите полный доступ к аналитике, интерактивным картам и детальным отчетам.</p>
+            <a href="{% url 'tariffs' %}" class="cta-button" style="margin-top: 20px;">Посмотреть тарифы</a>
+        {% endif %}
+    </div>
+
+</div>
+{% endblock %}

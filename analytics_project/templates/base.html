@@ -1,0 +1,124 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Можно сделать и заголовок динамическим -->
+    <title>{% block title %}Аналитика Недвижимости{% endblock %}</title>
+
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+<!--    <link rel="stylesheet" href="{% static 'css/style.css' %}">-->
+    <link type="text/css" href="{% static 'realty_analytics/css/style.css' %}" rel = "stylesheet"/>
+</head>
+<body class="{% block body_class %}{% endblock %}">
+
+    <!-- ======== ОБНОВЛЕННАЯ ШАПКА САЙТА ======== -->
+<header class="site-header">
+    <div class="container">
+        <a href="{% url 'home'  %}" class="logo">АНАЛИТИКА НЕДВИЖИМОСТИ</a>
+        <nav class="main-nav">
+                <ul>
+                    <!-- Пункт с мега-меню -->
+                    <li class="nav-item-has-megamenu">
+                        <a href="#">Аналитика</a>
+                        <!-- Сама панель мега-меню -->
+                        <div class="mega-menu">
+                            <div class="mega-menu-content">
+                                <!-- Колонка Москвы -->
+                                <div class="mega-menu-column">
+                                    <h3 class="mega-menu-title">Москва</h3>
+                                    <ul>
+                                        {% for district in moscow_districts %}
+                                            <li><a href="{{ district.get_absolute_url }}">{{ district.name }}</a></li>
+                                        {% endfor %}
+
+                                        <li><a href="{% url 'msk:map' %}" class="mega-menu-all-link">Все районы Москвы »</a></li>
+                                    </ul>
+                                </div>
+                                <!-- Колонка Санкт-Петербурга -->
+                                <div class="mega-menu-column">
+                                    <h3 class="mega-menu-title">Санкт-Петербург</h3>
+                                    <ul>
+                                            {% for district in spb_districts %}
+                                                <li><a href="{{ district.get_absolute_url }}">{{ district.name }}</a></li>
+                                            {% endfor %}
+<!--                                        <li><a href="#">Адмиралтейский</a></li>-->
+<!--                                        <li><a href="#">Василеостровский</a></li>-->
+<!--                                        <li><a href="#">Петроградский</a></li>-->
+<!--                                        <li><a href="#">Центральный</a></li>-->
+<!--                                        <li><a href="#">Московский</a></li>-->
+                                         <li><a href="{% url 'spb:map' %}" class="mega-menu-all-link">Все территории СПб »</a></li>
+                                    </ul>
+                                </div>
+                                <!-- Дополнительная колонка, например, для рекламы -->
+<!--                                <div class="mega-menu-column mega-menu-promo">-->
+<!--                                     <h3 class="mega-menu-title">Pro-доступ</h3>-->
+<!--                                     <p>Получите доступ к полной базе данных, выгрузке отчетов и эксклюзивной аналитике.</p>-->
+<!--                                     <a href="#" class="cta-button">Узнать больше</a>-->
+<!--                                </div>-->
+                                <div class="mega-menu-column">
+                                    <h3 class="mega-menu-title">Карты</h3>
+                                    <ul>
+                                        <!-- ... список округов ... -->
+<!--                                        <li><a href="#" class="mega-menu-all-link">Все районы Москвы »</a></li>-->
+                                        <!-- ДОБАВЬТЕ ЭТУ ССЫЛКУ -->
+                                        <li><a href="{% url 'msk:map' %}">Интерактивная карта Москвы</a></li>
+                                        <li><a href="{% url 'spb:map' %}">Интерактивная карта Санкт-Петербурга</a></li>
+
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+                    <!-- Остальные пункты меню -->
+                    <li><a href="{% url 'journal' %}">Журнал</a></li>
+                    <li><a href="{% url 'tariffs' %}">Тарифы</a></li>
+                    <li><a href="{% url 'about' %}">О проекте</a></li>
+
+    <!-- ... ваши основные пункты ... -->
+                    {% if user.is_authenticated %}
+                        <li><a href="{% url 'profile' %}">Профиль</a></li>
+                        <li>
+        <!-- НАЧАЛО ФОРМЫ ДЛЯ ВЫХОДА -->
+                            <form action="{% url 'logout' %}" method="post" style="display: inline;">
+                                {% csrf_token %}
+                                <button type="submit" class="nav-button-link">Выход</button>
+                            </form>
+                            <!-- КОНЕЦ ФОРМЫ -->
+                        </li>
+                    {% else %}
+                        <li><a href="{% url 'login' %}">Вход</a></li>
+                        <li><a href="{% url 'register' %}">Регистрация</a></li>
+                    {% endif %}
+
+                </ul>
+            </nav>
+        <!-- ДОБАВЛЕННАЯ КНОПКА-БУРГЕР -->
+        <button class="burger-menu" id="burger-menu" aria-label="Открыть меню">
+            <span></span>
+            <span></span>
+            <span></span>
+        </button>
+    </div>
+</header>
+
+    <!-- Сюда будет вставляться уникальный контент каждой страницы -->
+    {% block content %}
+    {% endblock %}
+
+    <footer class="site-footer">
+        <!-- Ваш стандартный подвал (если он есть) -->
+        <div class="container">
+            <p>© 2025 Аналитический портал недвижимости. Все права защищены.</p>
+        </div>
+    </footer>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<!--    <script src="{% static 'js/script.js' %}"></script>-->
+<!--     integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="-->
+<!--     crossorigin=""></script>-->
+    <script src="{% static 'realty_analytics/js/script.js' %}"></script>
+</body>
+</html>

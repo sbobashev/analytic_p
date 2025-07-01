@@ -1,0 +1,26 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Район Хамовники",
+        "district_id": "d_khamovniki"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [37.531, 55.742],
+            [37.560, 55.750],
+            [37.589, 55.748],
+            [37.600, 55.728],
+            [37.570, 55.708],
+            [37.555, 55.718],
+            [37.531, 55.742]
+          ]
+        ]
+      }
+    }
+  ]
+}

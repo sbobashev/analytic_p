@@ -1,0 +1,78 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Главная — Аналитика Недвижимости{% endblock %}
+
+
+    <!-- ======== ОСНОВНОЕ СОДЕРЖИМОЕ ======== -->
+{% block content %}
+    <main>
+        <div class="container">
+            <header class="page-header text-center">
+                <h1 class="page-title">Тарифы и подписка</h1>
+                <p class="page-subtitle">Получите полный доступ к данным для принятия взвешенных решений.</p>
+            </header>
+
+            <!-- Контейнер для тарифных планов -->
+            <div class="pricing-plans">
+                <!-- Тариф 1: Базовый -->
+                <div class="plan">
+                    <div class="plan-header">
+                        <h3 class="plan-name">Читатель</h3>
+                        <div class="plan-price">0 ₽</div>
+                        <div class="plan-period">навсегда</div>
+                    </div>
+                    <ul class="plan-features">
+                        <li>✓ Доступ к статьям в Журнале</li>
+                        <li>✓ Базовая аналитика по городам</li>
+                        <li class="feature-disabled">✗ Аналитика по районам</li>
+                        <li class="feature-disabled">✗ Интерактивная карта</li>
+                        <li class="feature-disabled">✗ Выгрузка отчетов в PDF</li>
+                    </ul>
+                    <div class="plan-footer">
+                        <a href="#" class="cta-button secondary">Ваш текущий план</a>
+                    </div>
+                </div>
+
+                <!-- Тариф 2: Профессиональный (выделенный) -->
+                <div class="plan popular">
+                    <div class="plan-badge">Рекомендуем</div>
+                    <div class="plan-header">
+                        <h3 class="plan-name">Профессионал</h3>
+                        <div class="plan-price">1 990 ₽</div>
+                        <div class="plan-period">в месяц</div>
+                    </div>
+                    <ul class="plan-features">
+                        <li>✓ Все возможности тарифа "Читатель"</li>
+                        <li>✓ Полная аналитика по всем районам</li>
+                        <li>✓ Интерактивная карта с фильтрами</li>
+                        <li>✓ Покупка детальных PDF-отчетов</li>
+                        <li class="feature-disabled">✗ API-доступ к данным</li>
+                    </ul>
+                    <div class="plan-footer">
+                        <a href="#" class="cta-button">Выбрать тариф</a>
+                    </div>
+                </div>
+
+                <!-- Тариф 3: Корпоративный -->
+                <div class="plan">
+                    <div class="plan-header">
+                        <h3 class="plan-name">Компания</h3>
+                        <div class="plan-price">По запросу</div>
+                        <div class="plan-period">для команд и бизнеса</div>
+                    </div>
+                    <ul class="plan-features">
+                        <li>✓ Все возможности тарифа "Профессионал"</li>
+                        <li>✓ API-доступ к сырым данным</li>
+                        <li>✓ Персональный менеджер</li>
+                        <li>✓ Кастомные исследования</li>
+                        <li>✓ Брендирование отчетов</li>
+                    </ul>
+                    <div class="plan-footer">
+                        <a href="#" class="cta-button secondary">Связаться с нами</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    {% endblock %}
