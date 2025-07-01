@@ -356,7 +356,7 @@ def ShowDistrict(request, slug, city_code): #в оригинале - district_de
     }
 
 
-    return render(request, 'realty_analytics/District.html', context)
+    return render(request, 'realty_analytics/district.html', context)
 
 
 def AnHome(request):
