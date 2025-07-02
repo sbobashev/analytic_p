@@ -13,7 +13,7 @@ from django.db.models.functions import Lag
 
 from django.http import JsonResponse, HttpResponseBadRequest
 from .models import ZoneAnalyticsDataPoint
-from django.db.models import Avg
+from django.db.models import Avg, Subquery, OuterRef, F
 from collections import defaultdict
 import json  # Добавьте, если еще не импортирован
 
@@ -210,20 +210,35 @@ def get_price_history_api(request, district_id):
     return JsonResponse(response_data)
 
 def get_districts_geojson(request):
+
+    city_id = request.GET.get('city_id')  # Получаем city_id из GET-параметра
+
+    if not city_id:
+        return JsonResponse({"error": "city_id is required"}, status=400)
+    # Для каждого района (OuterRef('zonen_id')) мы находим последнюю по дате
+    # запись в ZoneAnalyticsDataPoint и берем ее цену.
+    latest_price_subquery = ZoneAnalyticsDataPoint.objects.filter(
+        zonen_id=OuterRef('zonen_id'),
+        property_type='secondary'  # или любой другой тип по умолчанию
+    ).order_by('-date').values('avg_price_sqm')[:1]
+
+    # Получаем все районы для города и присоединяем к ним вычисленную цену
+    districts = District.objects.filter(
+        city_id=city_id,
+        zonen_id__isnull=False  # Берем только те, у кого есть zonen_id
+    ).annotate(
+        latest_price=Subquery(latest_price_subquery)
+    )
+
+    # Получаем все районы из базы данных старый вариант
+    # districts = District.objects.all()
+    # if city_id:
+    #     districts = districts.filter(city_id=city_id)
     # Собираем структуру GeoJSON
-
-
-
     feature_collection = {
         "type": "FeatureCollection",
         "features": []
     }
-
-    city_id = request.GET.get('city_id')  # Получаем city_id из GET-параметра
-    # Получаем все районы из базы данных
-    districts = District.objects.all()
-    if city_id:
-        districts = districts.filter(city_id=city_id)
 
     for district in districts:
         feature = {
@@ -231,6 +246,7 @@ def get_districts_geojson(request):
             "properties": {
                 "name": district.name,
                 "smart_name": district.name, # district.smart_name or
+                "price": district.latest_price,
                 "detail_url": district.get_absolute_url() if district.slug else None,
             },
             "geometry": district.geometry # Берем JSON-геометрию прямо из модели
@@ -273,6 +289,7 @@ def ShowMap(request, city_code):
         'map_config_json': json.dumps(map_config),
 
     }
+    context.update(get_districts())
     return render(request, 'realty_analytics/map-analytics.html', context)
 
 
@@ -300,7 +317,8 @@ def ShowArticle(request, slug):
 
 
 def ShowAbout(request):
-    return render(request, 'realty_analytics/about.html')
+    context = (get_districts())
+    return render(request, 'realty_analytics/about.html', context)
 
 def ShowDistrict(request, slug, city_code): #в оригинале - district_detail_view
     city_id = 77 if city_code == 'msk' else 78
@@ -354,10 +372,40 @@ def ShowDistrict(request, slug, city_code): #в оригинале - district_de
         'key_metrics': key_metrics,
         'district_geometry_json': json.dumps(district.geometry)
     }
+    context.update(get_districts())
 
 
     return render(request, 'realty_analytics/district.html', context)
 
+
+def get_districts():
+    try:
+        moscow_pulse = calculate_market_pulse(city_id=77, property_type='secondary')
+        moscow_districts = District.objects.filter(city_id=77)[:5]
+        # moscow_districts = District.objects.filter(city_id=77).exclude(raion_id__isnull=True)[:5]
+        # Заглушка популярных районов
+    except CityAnalytics.DoesNotExist:
+        moscow_data = None
+        moscow_districts = []
+
+        # 3. Получаем готовые данные для Санкт-Петербурга
+    try:
+        spb_pulse = calculate_market_pulse(city_id=78, property_type='secondary')
+        spb_districts = District.objects.filter(city_id=78)[:5]
+
+    except CityAnalytics.DoesNotExist:
+        spb_data = None
+        spb_districts = []
+
+
+    context = {
+        'moscow_pulse': moscow_pulse,
+        'moscow_districts': moscow_districts,
+        'spb_pulse': spb_pulse,
+        'spb_districts': spb_districts,
+    }
+
+    return context
 
 def AnHome(request):
 
@@ -367,35 +415,38 @@ def AnHome(request):
 
     # 1. Получаем последние 3 опубликованные статьи
     latest_articles = Article.objects.filter(status='published').order_by('-pub_date')[:3]
-
+    context = {
+         'latest_articles': latest_articles,
+    }
+    context.update(get_districts())
 
 
     # 2. Получаем готовые данные для Москвы
-    try:
-        moscow_pulse = calculate_market_pulse(city_id=77, property_type='secondary')
-        moscow_districts = District.objects.filter(city_id=77)[:5]
-        # moscow_districts = District.objects.filter(city_id=77).exclude(raion_id__isnull=True)[:5]
-    # Заглушка популярных районов
-    except CityAnalytics.DoesNotExist:
-        moscow_data = None
-        moscow_districts = []
+    # try:
+    #     moscow_pulse = calculate_market_pulse(city_id=77, property_type='secondary')
+    #     moscow_districts = District.objects.filter(city_id=77)[:5]
+    #     # moscow_districts = District.objects.filter(city_id=77).exclude(raion_id__isnull=True)[:5]
+    # # Заглушка популярных районов
+    # except CityAnalytics.DoesNotExist:
+    #     moscow_data = None
+    #     moscow_districts = []
+    #
+    # # 3. Получаем готовые данные для Санкт-Петербурга
+    # try:
+    #     spb_pulse = calculate_market_pulse(city_id=78, property_type='secondary')
+    #     spb_districts = District.objects.filter(city_id=78)[:5]
+    #
+    # except CityAnalytics.DoesNotExist:
+    #         spb_data = None
+    #         spb_districts = []
 
-    # 3. Получаем готовые данные для Санкт-Петербурга
-    try:
-        spb_pulse = calculate_market_pulse(city_id=78, property_type='secondary')
-        spb_districts = District.objects.filter(city_id=78)[:5]
-
-    except CityAnalytics.DoesNotExist:
-            spb_data = None
-            spb_districts = []
-
-    context = {
-        'latest_articles': latest_articles,
-        'moscow_pulse': moscow_pulse,
-        'moscow_districts': moscow_districts,
-        'spb_pulse': spb_pulse,
-        'spb_districts': spb_districts,
-    }
+    # context = {
+    #     'latest_articles': latest_articles,
+    #     'moscow_pulse': moscow_pulse,
+    #     'moscow_districts': moscow_districts,
+    #     'spb_pulse': spb_pulse,
+    #     'spb_districts': spb_districts,
+    # }
 
     return render(request, 'realty_analytics/index.html', context)
 

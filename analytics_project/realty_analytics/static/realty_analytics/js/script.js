@@ -277,46 +277,109 @@ function initAnalyticsMap() {
         attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
     }).addTo(map);
 
+ // --- Функция для определения цвета ---
+    // Принимает значение, минимум, максимум и возвращает цвет
+    function getColor(value, min, max) {
+        if (value === null || value === undefined) return '#CCCCCC'; // Серый для районов без данных
+        // Простая градиентная логика: от зеленого к желтому, потом к красному
+        const ratio = (value - min) / (max - min);
+        if (ratio < 0.5) {
+            // От зеленого (0) к желтому (0.5)
+            const green = 255;
+            const red = Math.round(510 * ratio);
+            return `rgb(${red},${green},0)`;
+        } else {
+            // От желтого (0.5) к красному (1)
+            const red = 255;
+            const green = Math.round(510 * (1 - ratio));
+            return `rgb(${red},${green},0)`;
+        }
+    }
+
+
     // 3. Загружаем данные GeoJSON
     const apiUrl = `/api/districts/?city_id=${cityId}`;
     fetch(apiUrl)
         .then(response => response.json())
-        .then(data => {
-            const geojsonLayer = L.geoJSON(data, {
-                style: {
-                    color: '#800000',
-                    weight: 2,
-                    fillColor: '#800000',
-                    fillOpacity: 0.1
+        .then(geojsonData => {
+            // 1. Находим минимальную и максимальную цену для нашей шкалы
+            const prices = geojsonData.features
+                .map(feature => feature.properties.price)
+                .filter(price => price !== null); // Игнорируем районы без цены
+
+            const minPrice = Math.min(...prices);
+            const maxPrice = Math.max(...prices);
+
+            // 2. Создаем слой GeoJSON с динамической стилизацией
+            const geojsonLayer = L.geoJSON(geojsonData, {
+                style: function(feature) {
+                    const price = feature.properties.price;
+                    return {
+                        fillColor: getColor(price, minPrice, maxPrice),
+                        weight: 1,
+                        opacity: 1,
+                        color: 'white',
+                        fillOpacity: 0.7
+                    };
                 },
                 onEachFeature: function(feature, layer) {
+                    // Логика для подсветки и тултипов остается почти такой же
                     const props = feature.properties;
-                    const tooltipContent = `<b>${props.smart_name}</b>`;
+                    const priceFormatted = props.price ? `${Math.round(props.price / 1000)} тыс. ₽` : 'Нет данных';
+                    const tooltipContent = `<b>${props.smart_name}</b><br>${priceFormatted}`;
 
-                    // 4. Используем bindTooltip для подсказки при наведении
-                    layer.bindTooltip(tooltipContent, {
-                        sticky: true, // Подсказка следует за курсором
-                        className: 'district-tooltip' // Добавим класс для стилизации
-                    });
+                    layer.bindTooltip(tooltipContent, { sticky: true, className: 'district-tooltip' });
 
-                    // 5. Добавляем обработчики событий
                     layer.on({
-                        mouseover: function(e) {
-                            e.target.setStyle({ weight: 3, fillOpacity: 0.4 });
-                        },
-                        mouseout: function(e) {
-                            geojsonLayer.resetStyle(e.target);
-                        },
-                        click: function(e) {
-                            // Если в данных есть URL, переходим по нему
-                            if (props.detail_url) {
-                                window.location.href = props.detail_url;
-                            }
+                        mouseover: e => e.target.setStyle({ weight: 3, color: '#333' }),
+                        mouseout: e => geojsonLayer.resetStyle(e.target),
+                        click: e => {
+                            if (props.detail_url) window.location.href = props.detail_url;
                         }
                     });
                 }
             }).addTo(map);
-        });
+
+// 3. Добавляем подробную легенду на карту
+const legend = L.control({ position: 'bottomright' });
+
+legend.onAdd = function(map) {
+    const div = L.DomUtil.create('div', 'info legend');
+    const gradesCount = 5; // Количество меток на шкале (можно менять)
+    const grades = [];
+    const range = maxPrice - minPrice;
+
+    // Генерируем значения для шкалы
+    for (let i = 0; i < gradesCount; i++) {
+        grades.push(Math.round(minPrice + i * (range / (gradesCount - 1))));
+    }
+
+    let labelsHTML = '';
+    // Идем по массиву в обратном порядке, чтобы метки шли сверху вниз (от max к min)
+    for (let i = grades.length - 1; i >= 0; i--) {
+        const grade = grades[i];
+        // Форматируем число (например, 550k)
+        const formattedGrade = `${Math.round(grade / 1000)}k`;
+        labelsHTML += `<span>${formattedGrade}</span>`;
+    }
+
+    div.innerHTML =
+        `<h4>Цена за м² (₽)</h4>
+         <div class="gradient-container">
+             <div class="gradient"></div>
+             <div class="labels">
+                 ${labelsHTML}
+             </div>
+         </div>`;
+
+    return div;
+};
+
+// Проверяем, есть ли что показывать, прежде чем добавлять легенду
+if (minPrice && maxPrice) {
+    legend.addTo(map);
+}
+});
 }
 
 
@@ -378,6 +441,11 @@ function initAnalyticsMap_old() {
             }).addTo(map);
         });
 }
+
+
+
+
+
 /**
  * Универсальная функция для инициализации графика на главной странице.
  * @param {string} canvasId - ID элемента <canvas> для графика.

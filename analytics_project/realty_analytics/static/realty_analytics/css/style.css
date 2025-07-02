@@ -1163,3 +1163,47 @@ body.no-scroll {
     padding: 5px 10px;
     font-family: var(--font-body);
 }
+
+/* ======== УЛУЧШЕННЫЕ СТИЛИ ДЛЯ ЛЕГЕНДЫ КАРТЫ ======== */
+.info.legend {
+    padding: 10px;
+    line-height: 20px;
+    color: #555;
+    background-color: #fff;
+    border-radius: 5px;
+    box-shadow: 0 0 15px rgba(0,0,0,0.2);
+    width: 150px; /* Зададим фиксированную ширину */
+}
+
+.legend h4 {
+    margin: 0 0 10px;
+    font-weight: bold;
+    color: #333;
+    text-align: center;
+}
+
+/* Контейнер для градиента и меток */
+.legend .gradient-container {
+    display: flex;
+    align-items: stretch; /* Растягиваем метки по высоте */
+    height: 120px; /* Высота градиентной шкалы */
+}
+
+/* Сам градиентный блок */
+.legend .gradient {
+    width: 20px; /* Ширина градиентной полосы */
+    height: 100%;
+    border: 1px solid #999;
+    /* Главная магия: создаем градиент с помощью CSS */
+    background: linear-gradient(to top, rgb(0,255,0), rgb(255,255,0), rgb(255,0,0));
+}
+
+/* Блок для текстовых меток */
+.legend .labels {
+    display: flex;
+    flex-direction: column; /* Располагаем метки в столбик */
+    justify-content: space-between; /* Равномерно распределяем по высоте */
+    padding-left: 10px;
+    font-size: 12px;
+    width: 100%;
+}

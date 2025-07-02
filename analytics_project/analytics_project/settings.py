@@ -83,7 +83,7 @@ WSGI_APPLICATION = 'analytics_project.wsgi.application'
 DATABASES = {
 
 
-    'post': {
+    'pg': {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'analytics_db',
         'USER': 'analytics_user',

@@ -72,25 +72,25 @@
                         </div>
                     </li>
                     <!-- Остальные пункты меню -->
-                    <li><a href="{% url 'journal' %}">Журнал</a></li>
-                    <li><a href="{% url 'tariffs' %}">Тарифы</a></li>
+<!--                    <li><a href="{% url 'journal' %}">Журнал</a></li>-->
+<!--                    <li><a href="{% url 'tariffs' %}">Тарифы</a></li>-->
                     <li><a href="{% url 'about' %}">О проекте</a></li>
 
-    <!-- ... ваши основные пункты ... -->
-                    {% if user.is_authenticated %}
-                        <li><a href="{% url 'profile' %}">Профиль</a></li>
-                        <li>
-        <!-- НАЧАЛО ФОРМЫ ДЛЯ ВЫХОДА -->
-                            <form action="{% url 'logout' %}" method="post" style="display: inline;">
-                                {% csrf_token %}
-                                <button type="submit" class="nav-button-link">Выход</button>
-                            </form>
-                            <!-- КОНЕЦ ФОРМЫ -->
-                        </li>
-                    {% else %}
-                        <li><a href="{% url 'login' %}">Вход</a></li>
-                        <li><a href="{% url 'register' %}">Регистрация</a></li>
-                    {% endif %}
+<!--    &lt;!&ndash; ... ваши основные пункты ... &ndash;&gt;-->
+<!--                    {% if user.is_authenticated %}-->
+<!--                        <li><a href="{% url 'profile' %}">Профиль</a></li>-->
+<!--                        <li>-->
+<!--        &lt;!&ndash; НАЧАЛО ФОРМЫ ДЛЯ ВЫХОДА &ndash;&gt;-->
+<!--                            <form action="{% url 'logout' %}" method="post" style="display: inline;">-->
+<!--                                {% csrf_token %}-->
+<!--                                <button type="submit" class="nav-button-link">Выход</button>-->
+<!--                            </form>-->
+<!--                            &lt;!&ndash; КОНЕЦ ФОРМЫ &ndash;&gt;-->
+<!--                        </li>-->
+<!--                    {% else %}-->
+<!--                        <li><a href="{% url 'login' %}">Вход</a></li>-->
+<!--                        <li><a href="{% url 'register' %}">Регистрация</a></li>-->
+<!--                    {% endif %}-->
 
                 </ul>
             </nav>
